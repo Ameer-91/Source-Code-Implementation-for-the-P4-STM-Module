@@ -1,0 +1,101 @@
+{
+  "target": "bmv2",
+  "p4_version": "16",
+  "program": "p4_stm",
+  "pipeline_layout": {
+    "ingress": {
+      "controls": ["MyIngress"],
+      "registers": [
+        {
+          "name": "flow_byte_count",
+          "type": "register",
+          "bitwidth": 32,
+          "size": 1024
+        },
+        {
+          "name": "flow_pkt_count",
+          "type": "register",
+          "bitwidth": 32,
+          "size": 1024
+        }
+      ]
+    },
+    "egress": {
+      "controls": ["MyEgress"]
+    }
+  },
+  "headers": {
+    "ethernet": {
+      "fields": {
+        "dstAddr": 48,
+        "srcAddr": 48,
+        "ethType": 16
+      }
+    },
+    "ipv4": {
+      "fields": {
+        "version": 4,
+        "ihl": 4,
+        "diffserv": 8,
+        "totalLen": 16,
+        "identification": 16,
+        "flags": 3,
+        "fragOffset": 13,
+        "ttl": 8,
+        "protocol": 8,
+        "hdrChecksum": 16,
+        "srcAddr": 32,
+        "dstAddr": 32
+      }
+    },
+    "tcp": {
+      "fields": {
+        "srcPort": 16,
+        "dstPort": 16
+      }
+    }
+  },
+  "parsers": {
+    "MyParser": {
+      "parse_states": [
+        {
+          "name": "start",
+          "extract": ["ethernet"],
+          "transitions": [
+            {
+              "condition": {
+                "value": "0x0800",
+                "mask": "0xFFFF"
+              },
+              "next_state": "parse_ipv4",
+              "on": "ethernet.ethType"
+            }
+          ]
+        },
+        {
+          "name": "parse_ipv4",
+          "extract": ["ipv4"],
+          "transitions": [
+            {
+              "condition": {
+                "value": "6",
+                "mask": "0xFF"
+              },
+              "next_state": "parse_tcp",
+              "on": "ipv4.protocol"
+            }
+          ]
+        },
+        {
+          "name": "parse_tcp",
+          "extract": ["tcp"],
+          "transitions": [
+            {
+              "next_state": "accept"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

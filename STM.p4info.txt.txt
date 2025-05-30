@@ -1,0 +1,107 @@
+p4info {
+  package_info {
+    arch: "v1model"
+  }
+
+  registers {
+    preamble {
+      id: 1
+      name: "flow_byte_count"
+    }
+    bitwidth: 32
+    size: 1024
+  }
+
+  registers {
+    preamble {
+      id: 2
+      name: "flow_pkt_count"
+    }
+    bitwidth: 32
+    size: 1024
+  }
+
+  headers {
+    preamble {
+      id: 1
+      name: "ethernet"
+    }
+    fields {
+      id: 1
+      name: "dstAddr"
+      bitwidth: 48
+    }
+    fields {
+      id: 2
+      name: "srcAddr"
+      bitwidth: 48
+    }
+    fields {
+      id: 3
+      name: "ethType"
+      bitwidth: 16
+    }
+  }
+
+  headers {
+    preamble {
+      id: 2
+      name: "ipv4"
+    }
+    fields {
+      id: 1
+      name: "srcAddr"
+      bitwidth: 32
+    }
+    fields {
+      id: 2
+      name: "dstAddr"
+      bitwidth: 32
+    }
+    fields {
+      id: 3
+      name: "protocol"
+      bitwidth: 8
+    }
+    fields {
+      id: 4
+      name: "diffserv"
+      bitwidth: 8
+    }
+    fields {
+      id: 5
+      name: "fragOffset"
+      bitwidth: 13
+    }
+    fields {
+      id: 6
+      name: "totalLen"
+      bitwidth: 16
+    }
+  }
+
+  headers {
+    preamble {
+      id: 3
+      name: "tcp"
+    }
+    fields {
+      id: 1
+      name: "srcPort"
+      bitwidth: 16
+    }
+    fields {
+      id: 2
+      name: "dstPort"
+      bitwidth: 16
+    }
+  }
+
+  pipelines {
+    name: "ingress"
+  }
+
+  pipelines {
+    name: "egress"
+  }
+}
